@@ -62,21 +62,14 @@ public class FeatureExtractor {
     }
 
     private static String extractFromSentence(String sentence, List<String> ruleList) {
-        boolean isNextGroup = true;
+        boolean found= false;
         StringBuilder sb = new StringBuilder();
         for (String rule : ruleList) {
-            if (StringUtils.isBlank(rule)) {
-                isNextGroup = true;
-                continue;
-            }
-            if (!isNextGroup) {
-                continue;
-            }
-
-            String[] rp = StringUtils.split(rule, " ", 2);
-            if (Pattern.matches(pattern(rp[0]), sentence)) {
-                append(sb, rp[0] + " " + rp[1], ";");
-                isNextGroup = false;
+            if (!found || StringUtils.isBlank(rule)) {
+                String[] rp = StringUtils.split(rule, " ", 2);
+                if (found = StringUtils.isNotBlank(rule) && Pattern.matches(pattern(rp[0]), sentence)) {
+                    append(sb, rp[0] + " " + rp[1], ";");
+                }
             }
         }
         return sb.toString();
