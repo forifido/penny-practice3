@@ -51,7 +51,7 @@ public class FeatureExtractor {
         if (sentences != null) {
             for (int i = 0; i < sentences.length; i++) {
                 String tmp = extractFromSentence(sentences[i], ruleList);
-                if (!StringUtils.isBlank(tmp)) {
+                if (StringUtils.isNotEmpty(tmp)) {
                     append(sb, tmp, ";");
                 }
             }
