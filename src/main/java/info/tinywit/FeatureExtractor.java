@@ -12,8 +12,9 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 public class FeatureExtractor {
-    public static List<String> initRuleList() {
-        List<String> ruleList = new LinkedList();
+    private static final List<String> ruleList = new LinkedList<>();
+
+    static {
         BufferedReader bufferedReader = null;
         try {
             bufferedReader = new BufferedReader(new InputStreamReader(FeatureExtractor.class.getResourceAsStream("/rule.txt"), StandardCharsets.UTF_8));
@@ -35,11 +36,9 @@ public class FeatureExtractor {
                 }
             }
         }
-        return ruleList;
     }
 
     public static String extract(String... textList) {
-        List<String> ruleList = initRuleList();
         StringBuilder sb = new StringBuilder();
         for (String text : textList) {
             append(sb, extract(text, ruleList), System.lineSeparator());
@@ -47,7 +46,7 @@ public class FeatureExtractor {
         return sb.toString();
     }
 
-    public static String extract(String text, List<String> ruleList) {
+    private static String extract(String text, List<String> ruleList) {
         String[] sentences = StringUtils.split(text, ",，");
         StringBuilder sb = new StringBuilder();
         if (sentences != null) {
@@ -62,7 +61,7 @@ public class FeatureExtractor {
     }
 
     private static String extractFromSentence(String sentence, List<String> ruleList) {
-        boolean found= false;
+        boolean found = false;
         StringBuilder sb = new StringBuilder();
         for (String rule : ruleList) {
             if (!found || StringUtils.isBlank(rule)) {
