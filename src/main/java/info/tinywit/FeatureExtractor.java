@@ -6,13 +6,12 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.Pattern;
 
 public class FeatureExtractor {
-    private static final List<String> ruleList = new LinkedList<>();
+    private static final List<String[]> ruleList = new LinkedList<>();
 
     static {
         BufferedReader bufferedReader = null;
@@ -20,11 +19,11 @@ public class FeatureExtractor {
             bufferedReader = new BufferedReader(new InputStreamReader(FeatureExtractor.class.getResourceAsStream("/rule.txt"), StandardCharsets.UTF_8));
             String line;
             while ((line = bufferedReader.readLine()) != null) {
-                String[] rl = StringUtils.split(line, ":");
-                if (rl != null) {
-                    ruleList.addAll(Arrays.asList(rl));
-                    ruleList.add("");
+                String[] rule = StringUtils.split(line, ":");
+                for (int i = 0; i < rule.length; i++) {
+                    ruleList.add(StringUtils.split(rule[i], " ", 2));
                 }
+                ruleList.add(null);
             }
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -46,7 +45,7 @@ public class FeatureExtractor {
         return sb.toString();
     }
 
-    private static String extract(String text, List<String> ruleList) {
+    private static String extract(String text, List<String[]> ruleList) {
         String[] sentences = StringUtils.split(text, ",，");
         StringBuilder sb = new StringBuilder();
         if (sentences != null) {
@@ -60,14 +59,13 @@ public class FeatureExtractor {
         return sb.toString();
     }
 
-    private static String extractFromSentence(String sentence, List<String> ruleList) {
+    private static String extractFromSentence(String sentence, List<String[]> ruleList) {
         boolean found = false;
         StringBuilder sb = new StringBuilder();
-        for (String rule : ruleList) {
-            if (!found || StringUtils.isBlank(rule)) {
-                String[] rp = StringUtils.split(rule, " ", 2);
-                if (found = StringUtils.isNotBlank(rule) && Pattern.matches(pattern(rp[0]), sentence)) {
-                    append(sb, rp[0] + " " + rp[1], ";");
+        for (String[] rule : ruleList) {
+            if (!found || rule == null) {
+                if (found = rule != null && Pattern.matches(pattern(rule[0]), sentence)) {
+                    append(sb, rule[0] + " " + rule[1], ";");
                 }
             }
         }
