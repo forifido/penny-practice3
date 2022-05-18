@@ -79,9 +79,6 @@ public class FeatureExtractor {
     }
 
     private static StringBuilder append(StringBuilder sb, String str, String sep) {
-        if (sb.length() != 0) {
-            sb.append(sep);
-        }
-        return sb.append(str);
+        return (sb.length() == 0 ? sb : sb.append(sep)).append(str);
     }
 }
